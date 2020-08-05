@@ -1,24 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import {mainJson} from './mainJson'
 import './App.css';
 
-function App() {
+const App = ({entity, isEntityOpen}) => {
+  const [isOpen, setIsOpen] = useState(isEntityOpen !== undefined ? isEntityOpen : true)
+  const treeEntity = entity || mainJson
+
+  const extendEntity = (entity) =>{
+    return <App entity={entity} isEntityOpen={isOpen}/>
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    {treeEntity.child_runs.map(level=>{
+      const onOpen = ()=> setIsOpen(!isOpen)
+      return (
+        <ol>
+        <li><button onClick={onOpen}> {isOpen ? '-' : '+'} </button>
+        <div> {level.step.title}</div>      
+        {isOpen && extendEntity(level)}  
+       </li>
+       </ol>
+      )
+
+    }
+    )}
     </div>
   );
 }
